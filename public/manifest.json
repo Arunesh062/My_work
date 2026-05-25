@@ -1,0 +1,16 @@
+{
+  "name": "My Work - Fitness Tracker",
+  "short_name": "My Work",
+  "description": "Smart fitness app for weight gain",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
