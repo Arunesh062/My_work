@@ -46,7 +46,7 @@ npm run dev
 ```
 
 The frontend will run on [http://localhost:5173](http://localhost:5173)
-The backend will run on [http://localhost:5000](http://localhost:5000)
+The backend is deployed at: [https://my-work-up8e.onrender.com](https://my-work-up8e.onrender.com)
 
 ## 📁 Project Structure
 
