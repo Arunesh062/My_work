@@ -1,8 +1,7 @@
 import { useStore } from '../store/useStore';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, AreaChart, Area } from 'recharts';
 import { calculateBMI, getBMICategory, formatDate } from '../utils/helpers';
-import { HiTrendingUp, HiScale, HiOutlineLightningBolt, HiOutlineChartBar } from 'react-icons/hi';
-import WeightChart from '../components/WeightChart';
+import { HiTrendingUp, HiScale, HiOutlineLightningBolt, HiOutlineChartBar, HiFire } from 'react-icons/hi';
+import SimpleWeightChart from '../components/SimpleWeightChart';
 
 export default function Analytics() {
   const { weightLogs, calorieLogs, reminders, profile, getWeeklyCompletionScore } = useStore();
@@ -82,7 +81,7 @@ export default function Analytics() {
           </div>
         </div>
         <div className="h-[400px] w-full relative z-10">
-          <WeightChart data={weightLogs} height={400} />
+          <SimpleWeightChart />
         </div>
         {/* Decorative Watermark */}
         <div className="absolute -bottom-10 -right-10 text-[180px] font-black text-white/5 uppercase select-none pointer-events-none italic">SCALE</div>
@@ -97,46 +96,24 @@ export default function Analytics() {
                   <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Metabolic fuel intake vs target requirement</p>
                </div>
             </header>
-            <div className="h-[350px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={last7Days} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
-                  <XAxis
-                    dataKey="name"
-                    tick={{ fill: 'var(--color-dark-400)', fontSize: 10, fontWeight: 700 }}
-                    axisLine={false}
-                    tickLine={false}
-                    dy={10}
-                  />
-                  <YAxis
-                    tick={{ fill: 'var(--color-dark-400)', fontSize: 10, fontWeight: 700 }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <Tooltip
-                    cursor={{ fill: 'rgba(255,255,255,0.02)' }}
-                    content={({ active, payload, label }) => {
-                      if (active && payload?.[0]) {
-                        return (
-                          <div className="px-6 py-4 rounded-3xl bg-dark-900 border border-white/10 shadow-2xl backdrop-blur-xl">
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{label} FUEL</p>
-                            <p className="text-2xl font-black text-white">{payload[0].value} <span className="text-xs font-bold text-slate-500 uppercase">kcal</span></p>
-                            <div className="mt-2 text-[10px] font-bold text-accent-cyan uppercase">Target: {payload[0].payload.target}</div>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Bar
-                    dataKey="calories"
-                    fill="var(--color-accent-cyan)"
-                    radius={[12, 12, 0, 0]}
-                    barSize={40}
-                    animationDuration={2000}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+            <div className="grid grid-cols-7 gap-2 md:gap-4 h-[350px] items-end">
+              {last7Days.map((day, idx) => {
+                const height = Math.min((day.calories / (day.target || 3000)) * 100, 100);
+                return (
+                  <div key={idx} className="flex flex-col items-center gap-4 h-full justify-end group">
+                    <div className="relative w-full flex justify-center">
+                       <div className="absolute bottom-full mb-2 bg-dark-900 border border-white/10 px-2 py-1 rounded text-[10px] text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                          {day.calories} kcal
+                       </div>
+                       <div 
+                         className="w-full max-w-[40px] bg-accent-cyan rounded-t-xl transition-all duration-700 ease-out"
+                         style={{ height: `${height}%`, minHeight: '4px' }}
+                       />
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{day.name}</span>
+                  </div>
+                );
+              })}
             </div>
         </div>
       </section>

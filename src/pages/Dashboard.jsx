@@ -1,7 +1,7 @@
 import { useAuth } from '../context/AuthContext';
 import { useStore } from '../store/useStore';
 import ProgressCard from '../components/ProgressCard';
-import WeightChart from '../components/WeightChart';
+import SimpleWeightChart from '../components/SimpleWeightChart';
 import { HiPlus, HiFire, HiScale, HiBeaker, HiOutlineLightningBolt } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
 
@@ -95,7 +95,7 @@ export default function Dashboard() {
                      <span className="text-[10px] text-white font-black uppercase">Live Updates</span>
                   </div>
                </div>
-               <WeightChart data={weightLogs} />
+               <SimpleWeightChart />
             </div>
          </div>
       </section>

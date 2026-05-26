@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
-import WeightChart from '../components/WeightChart';
+import SimpleWeightChart from '../components/SimpleWeightChart';
 import { formatDate } from '../utils/helpers';
 import { HiPlusSm, HiScale, HiTrendingUp, HiFlag } from 'react-icons/hi';
 
@@ -103,7 +103,7 @@ export default function WeightTracker() {
             </div>
 
             <div className="h-[350px] w-full">
-              <WeightChart data={last7} height={350} />
+              <SimpleWeightChart />
             </div>
           </div>
 

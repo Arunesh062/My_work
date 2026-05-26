@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { HiPlus, HiFire, HiOutlineLightningBolt, HiTrash } from 'react-icons/hi';
 
 export default function CaloriesTracker() {
@@ -60,26 +59,30 @@ export default function CaloriesTracker() {
             {/* Visual Progress */}
             <div className="bg-dark-800 border border-white/5 rounded-[40px] p-8 flex flex-col items-center justify-center relative overflow-hidden group">
                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-cyan to-accent-blue opacity-20" />
-               <div className="relative w-48 h-48 md:w-56 md:h-56">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={chartData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius="75%"
-                        outerRadius="90%"
-                        paddingAngle={5}
-                        dataKey="value"
-                        stroke="none"
-                        animationDuration={1500}
-                      >
-                        {chartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
+               <div className="relative w-48 h-48 md:w-56 md:h-56 flex items-center justify-center">
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle
+                      cx="50%"
+                      cy="50%"
+                      r="40%"
+                      stroke="currentColor"
+                      strokeWidth="12"
+                      fill="transparent"
+                      className="text-dark-900"
+                    />
+                    <circle
+                      cx="50%"
+                      cy="50%"
+                      r="40%"
+                      stroke="currentColor"
+                      strokeWidth="12"
+                      fill="transparent"
+                      strokeDasharray={`${2 * Math.PI * 40}`}
+                      strokeDashoffset={`${2 * Math.PI * 40 * (1 - percentage / 100)}`}
+                      strokeLinecap="round"
+                      className="text-accent-cyan transition-all duration-1000 ease-out"
+                    />
+                  </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-4xl md:text-5xl font-black text-white">{Math.round(percentage)}%</span>
                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Metabolized</span>
