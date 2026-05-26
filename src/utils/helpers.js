@@ -61,8 +61,8 @@ export const sendNotification = (title, body, icon = '💪', soundEnabled = true
   try {
     new Notification(title, {
       body,
-      icon: '/vite.svg',
-      badge: '/vite.svg',
+      icon: '/favicon.svg',
+      badge: '/favicon.svg',
       tag: `mywork-${Date.now()}`,
       requireInteraction: false,
       silent: false,
