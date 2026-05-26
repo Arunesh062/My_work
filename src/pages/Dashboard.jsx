@@ -2,6 +2,7 @@ import { useAuth } from '../context/AuthContext';
 import { useStore } from '../store/useStore';
 import ProgressCard from '../components/ProgressCard';
 import SimpleWeightChart from '../components/SimpleWeightChart';
+import NotificationButton from '../components/NotificationButton';
 import { HiPlus, HiFire, HiScale, HiBeaker, HiOutlineLightningBolt } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
 
@@ -137,16 +138,20 @@ export default function Dashboard() {
             </div>
          </div>
 
-         <div className="lg:col-span-4 bg-dark-800 border border-white/5 rounded-[40px] p-8 flex flex-col justify-between relative overflow-hidden">
-            <div className="absolute -bottom-8 -right-8 text-white opacity-5 pointer-events-none"><HiFire size={160} /></div>
-            <div className="space-y-4 relative z-10">
-               <h3 className="text-lg font-black text-white italic uppercase tracking-tighter leading-tight">Hydration Insight</h3>
-               <p className="text-sm text-slate-500 font-medium">Drinking 500ml of fluids during feeding protocols increases cellular nutrient absorption by 12%.</p>
-            </div>
-            <div className="pt-10 relative z-10">
-               <div className="p-6 rounded-3xl bg-dark-900 border border-white/5">
-                  <p className="text-[10px] font-black text-accent-cyan uppercase tracking-widest mb-1">Status Proclamation</p>
-                  <p className="text-xs font-bold text-white italic">"The scale doesn't lie, but it also doesn't reward the lazy."</p>
+         <div className="lg:col-span-4 space-y-8">
+            <NotificationButton />
+            
+            <div className="bg-dark-800 border border-white/5 rounded-[40px] p-8 flex flex-col justify-between relative overflow-hidden min-h-[300px]">
+               <div className="absolute -bottom-8 -right-8 text-white opacity-5 pointer-events-none"><HiFire size={160} /></div>
+               <div className="space-y-4 relative z-10">
+                  <h3 className="text-lg font-black text-white italic uppercase tracking-tighter leading-tight">Hydration Insight</h3>
+                  <p className="text-sm text-slate-500 font-medium">Drinking 500ml of fluids during feeding protocols increases cellular nutrient absorption by 12%.</p>
+               </div>
+               <div className="pt-10 relative z-10">
+                  <div className="p-6 rounded-3xl bg-dark-900 border border-white/5">
+                     <p className="text-[10px] font-black text-accent-cyan uppercase tracking-widest mb-1">Status Proclamation</p>
+                     <p className="text-xs font-bold text-white italic">"The scale doesn't lie, but it also doesn't reward the lazy."</p>
+                  </div>
                </div>
             </div>
          </div>

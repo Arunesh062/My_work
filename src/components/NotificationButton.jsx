@@ -1,44 +1,51 @@
-import { requestNotificationPermission, sendNotification } from '../utils/helpers';
-import { useStore } from '../store/useStore';
-import { useState } from 'react';
+import { useNotifications } from '../context/NotificationContext';
+import { showNotification } from '../utils/notifications';
+import { HiBell, HiBellAlert, HiStatusOnline, HiColorSwatch } from 'react-icons/hi';
 
 export default function NotificationButton() {
-  const { settings, updateSettings } = useStore();
-  const [status, setStatus] = useState('');
+  const { permission, enabled, requestPermission, toggleNotifications } = useNotifications();
 
-  const handleEnable = async () => {
-    const granted = await requestNotificationPermission();
-    if (granted) {
-      updateSettings({ notificationsEnabled: true });
-      sendNotification('My Work', 'Notifications enabled! We\'ll remind you to eat. 💪', '💪', settings.notificationSound);
-      setStatus('enabled');
-    } else {
-      setStatus('denied');
-    }
-    setTimeout(() => setStatus(''), 3000);
+  const handleTest = () => {
+    showNotification("My Work", "Notification system is working 🔥");
   };
 
   return (
-    <div className="flex items-center gap-3">
-      <button
-        onClick={handleEnable}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border-none cursor-pointer"
-        style={{
-          background: settings.notificationsEnabled
-            ? 'rgba(6, 214, 160, 0.15)'
-            : 'rgba(59, 130, 246, 0.15)',
-          color: settings.notificationsEnabled ? '#06d6a0' : '#3b82f6',
-        }}
-      >
-        <span>{settings.notificationsEnabled ? '🔔' : '🔕'}</span>
-        <span>{settings.notificationsEnabled ? 'Notifications On' : 'Enable Notifications'}</span>
-      </button>
-      {status === 'denied' && (
-        <span className="text-xs text-red-400">Permission denied. Enable in browser settings.</span>
-      )}
-      {status === 'enabled' && (
-        <span className="text-xs text-green-400">Notifications enabled!</span>
-      )}
+    <div className="bg-dark-800 border border-white/5 rounded-[30px] p-6 space-y-6 shadow-2xl">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-black text-white uppercase tracking-widest">Neural Alerts</h3>
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter mt-1">Status: {permission === 'granted' ? (enabled ? 'Operational' : 'Paused') : 'Unauthorized'}</p>
+        </div>
+        <div className={`p-3 rounded-2xl ${enabled ? 'bg-accent-cyan/10 text-accent-cyan' : 'bg-dark-950 text-slate-700'}`}>
+          {enabled ? <HiBellAlert size={20} /> : <HiBell size={20} />}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {permission !== 'granted' ? (
+          <button
+            onClick={requestPermission}
+            className="w-full py-3 bg-accent-cyan text-dark-900 rounded-xl font-black text-[10px] uppercase tracking-widest hover:scale-[1.02] transition-all cursor-pointer"
+          >
+            Authorize System
+          </button>
+        ) : (
+          <button
+            onClick={toggleNotifications}
+            className={`w-full py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all cursor-pointer ${enabled ? 'bg-dark-950 text-slate-400 border border-white/5' : 'bg-accent-cyan text-dark-900'}`}
+          >
+            {enabled ? 'Disable Sync' : 'Enable Sync'}
+          </button>
+        )}
+        
+        <button
+          onClick={handleTest}
+          disabled={!enabled || permission !== 'granted'}
+          className="w-full py-3 bg-dark-950 text-white border border-white/10 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white/5 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          Test Signal
+        </button>
+      </div>
     </div>
   );
 }

@@ -9,13 +9,12 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
-// Force unregister any existing service workers to avoid fetch/routing errors
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then((registrations) => {
-    for (const registration of registrations) {
-      registration.unregister();
-      console.log('Service Worker unregistered');
-    }
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((reg) => console.log("[My Work] SW Registered:", reg.scope))
+      .catch((err) => console.error("[My Work] SW Registration failed:", err));
   });
 }
 

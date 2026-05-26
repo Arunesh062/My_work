@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 import PrivateRoute from './components/PrivateRoute';
 import { Suspense, lazy } from 'react';
 
@@ -28,6 +29,7 @@ export default function App() {
   return (
     <Router>
       <AuthProvider>
+        <NotificationProvider>
         <Suspense fallback={<LoadingScreen />}>
           <Routes>
             {/* Public Routes */}
@@ -49,6 +51,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
+        </NotificationProvider>
       </AuthProvider>
     </Router>
   );
