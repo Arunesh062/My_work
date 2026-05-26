@@ -110,42 +110,63 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    // Handle the result of a Google Redirect login
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          console.log("[Auth] Redirect login successful for:", result.user.email);
-        }
-      })
-      .catch((err) => {
-        console.error("[Auth] Redirect result error:", err);
-        setError(err.message);
-      });
+    let isMounted = true;
+    console.log("[Auth] Provider mounted. Initializing redirect and auth listeners...");
 
-    console.log("[Auth] Initializing onAuthStateChanged listener...");
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    async function initializeAuth() {
       try {
-        if (user) {
-          console.log("[Auth] User detected:", user.email);
-          const profile = await getUserProfile(user.uid, user.email, user.displayName);
-          setCurrentUser({ ...user, ...profile });
+        // 1. First, check if we're coming back from a Google Redirect
+        console.log("[Auth] Checking for redirect result...");
+        const result = await getRedirectResult(auth);
+        
+        if (result?.user) {
+          console.log("[Auth] Redirect login SUCCESS for:", result.user.email);
+          // The onAuthStateChanged listener will handle the profile fetching once the user is set
         } else {
-          console.log("[Auth] No user session found.");
-          setCurrentUser(null);
+          console.log("[Auth] No redirect result found (normal flow).");
         }
       } catch (err) {
-        console.error("[Auth] Fatal observer error:", err);
-        // Ensure app doesn't stay in loading state
-        setCurrentUser(null);
-      } finally {
-        setLoading(false);
+        console.error("[Auth] Redirect result ERROR:", err.code, err.message);
+        setError(err.message);
+        toast.error("Google login failed: " + err.message);
       }
-    }, (err) => {
-      console.error("[Auth] Stream error:", err);
-      setLoading(false);
-    });
 
-    return unsubscribe;
+      // 2. Then, set up the real-time observer
+      console.log("[Auth] Attaching onAuthStateChanged listener...");
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (!isMounted) return;
+        
+        try {
+          if (user) {
+            console.log("[Auth] Observer: User detected:", user.email);
+            const profile = await getUserProfile(user.uid, user.email, user.displayName);
+            setCurrentUser({ ...user, ...profile });
+          } else {
+            console.log("[Auth] Observer: No user session.");
+            setCurrentUser(null);
+          }
+        } catch (err) {
+          console.error("[Auth] Observer: Fatal error:", err);
+          setCurrentUser(null);
+        } finally {
+          setLoading(false);
+        }
+      }, (err) => {
+        console.error("[Auth] Observer: Stream error:", err);
+        setLoading(false);
+      });
+
+      return unsubscribe;
+    }
+
+    const authUnsubscribePromise = initializeAuth();
+
+    return () => {
+      isMounted = false;
+      authUnsubscribePromise.then(unsubscribe => {
+        if (typeof unsubscribe === 'function') unsubscribe();
+      });
+    };
   }, []);
 
   const value = {
