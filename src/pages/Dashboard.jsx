@@ -95,9 +95,15 @@ export default function Dashboard() {
                      <span className="text-[10px] text-white font-black uppercase">Live Updates</span>
                   </div>
                </div>
-               <div className="h-[200px] w-full">
-                  <WeightChart data={weightLogs} height={200} />
-               </div>
+                <div className="h-[200px] w-full flex items-center justify-center">
+                   {weightLogs && weightLogs.length > 0 ? (
+                      <WeightChart data={weightLogs} height={200} />
+                   ) : (
+                      <div className="text-center p-6">
+                         <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Awaiting Bio-Metric Input</p>
+                      </div>
+                   )}
+                </div>
             </div>
          </div>
       </section>
