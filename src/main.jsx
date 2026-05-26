@@ -9,5 +9,13 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
-// Service worker registration disabled
+// Force unregister any existing service workers to avoid fetch/routing errors
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    for (const registration of registrations) {
+      registration.unregister();
+      console.log('Service Worker unregistered');
+    }
+  });
+}
 
