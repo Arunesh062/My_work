@@ -93,13 +93,27 @@ export function AuthProvider({ children }) {
   }
 
   async function googleLogin() {
+    console.log("[Auth] googleLogin initiated...");
     setError(null);
     try {
-      // Use Redirect instead of Popup for better cross-browser compatibility
-      await signInWithRedirect(auth, googleProvider);
+      // First attempt: Popup (Better UX if it works)
+      console.log("[Auth] Attempting signInWithPopup...");
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log("[Auth] Popup login SUCCESS for:", result.user.email);
+      return result.user;
     } catch (err) {
-      setError(err.message);
-      throw err;
+      console.warn("[Auth] Popup failed or blocked, falling back to Redirect...", err.code);
+      
+      // If popup is blocked or fails, fall back to Redirect
+      try {
+        console.log("[Auth] Attempting signInWithRedirect...");
+        await signInWithRedirect(auth, googleProvider);
+      } catch (redirErr) {
+        console.error("[Auth] Both login methods failed:", redirErr);
+        setError(redirErr.message);
+        toast.error("Google login failed: " + redirErr.message);
+        throw redirErr;
+      }
     }
   }
 
