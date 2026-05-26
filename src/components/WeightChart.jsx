@@ -14,9 +14,18 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function WeightChart({ data, height = 300 }) {
+  if (!data || data.length === 0) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center p-8 text-center border border-dashed border-white/5 rounded-3xl" style={{ height }}>
+        <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.3em] mb-2">No Bio-Metric Data Detected</p>
+        <p className="text-xs text-slate-500 font-bold max-w-[200px]">Perform a scale check to initialize performance tracking.</p>
+      </div>
+    );
+  }
+
   const chartData = data.map(d => ({
     ...d,
-    formattedDate: formatDate(d.date),
+    formattedDate: formatDate(d.date || new Date().toISOString()),
   }));
 
   return (
