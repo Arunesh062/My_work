@@ -27,35 +27,37 @@ export function AuthProvider({ children }) {
 
   // Helper to create/get user profile
   async function getUserProfile(uid, email, displayName) {
-    try {
-      console.log(`[Auth] Fetching profile for UID: ${uid}`);
-      const userRef = doc(db, "users", uid);
-      const userSnap = await getDoc(userRef);
+    console.log("[Auth] Fetching profile for UID:", uid);
+    
+    // Add a race condition to prevent hanging indefinitely
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Timeout")), 4000)
+    );
 
+    try {
+      const userRef = doc(db, "users", uid);
+      const userSnap = await Promise.race([getDoc(userRef), timeoutPromise]);
+      
       if (userSnap.exists()) {
         console.log("[Auth] Profile found in Firestore.");
         return userSnap.data();
       } else {
-        console.warn("[Auth] No profile found. Creating default profile...");
+        console.log("[Auth] No profile found, creating default...");
         const defaultProfile = {
           uid,
           email,
           name: displayName || 'Champion',
           currentWeight: 60,
           targetWeight: 75,
-          height: 175,
-          calorieGoal: 3000,
-          waterGoal: 8,
-          streak: 0,
           createdAt: new Date().toISOString(),
         };
         await setDoc(userRef, defaultProfile);
         return defaultProfile;
       }
     } catch (err) {
-      console.error("[Auth] Error fetching/creating profile:", err);
-      // If Firestore is offline, return basic info so the app doesn't crash
-      return { uid, email, name: displayName || 'Warrior (Offline)', offline: true };
+      console.warn("[Auth] Profile fetch failed or timed out:", err.message);
+      // Fallback so the user can still use the app
+      return { uid, email, name: displayName || 'Warrior', offline: true };
     }
   }
 
