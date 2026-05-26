@@ -1,11 +1,22 @@
 import { HiMenuAlt2, HiBell, HiSearch } from 'react-icons/hi';
 import { useAuth } from '../../context/AuthContext';
 import { useStore } from '../../store/useStore';
+import { useNotifications } from '../../context/NotificationContext';
+import { showNotification } from '../../utils/notifications';
 import { getGreeting } from '../../utils/helpers';
 
 export default function Header({ onMenuClick }) {
   const { currentUser } = useAuth();
   const { streak } = useStore();
+  const { permission, requestPermission } = useNotifications();
+
+  const handleNotificationClick = async () => {
+    if (permission !== 'granted') {
+      await requestPermission();
+    } else {
+      showNotification("My Work", "Notification system is active and ready 🔔");
+    }
+  };
 
   const formattedDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -46,9 +57,12 @@ export default function Header({ onMenuClick }) {
           🔥 {streak} STREAK
         </div>
 
-        <button className="relative p-2.5 rounded-xl bg-dark-800 border border-white/5 text-slate-400 hover:text-white transition-all hover:border-white/10 cursor-pointer">
+        <button 
+          onClick={handleNotificationClick}
+          className="relative p-2.5 rounded-xl bg-dark-800 border border-white/5 text-slate-400 hover:text-white transition-all hover:border-white/10 cursor-pointer"
+        >
           <HiBell size={20} />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-accent-red rounded-full border-2 border-dark-800" />
+          <span className={`absolute top-2 right-2 w-2 h-2 rounded-full border-2 border-dark-800 ${permission === 'granted' ? 'bg-accent-cyan' : 'bg-accent-red'}`} />
         </button>
 
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-cyan to-accent-blue p-[1px] shadow-lg shadow-accent-cyan/10 hidden xs:block">
