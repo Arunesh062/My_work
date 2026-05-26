@@ -1,6 +1,6 @@
 import { useNotifications } from '../context/NotificationContext';
 import { showNotification } from '../utils/notifications';
-import { HiBell, HiBellAlert, HiStatusOnline, HiColorSwatch } from 'react-icons/hi';
+import { HiBell, HiBellAlert } from 'react-icons/hi';
 
 export default function NotificationButton() {
   const { permission, enabled, requestPermission, toggleNotifications } = useNotifications();
