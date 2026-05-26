@@ -1,4 +1,5 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Component } from 'react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { formatDate } from '../utils/helpers';
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -13,7 +14,28 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-export default function WeightChart({ data, height = 300 }) {
+// Error boundary to catch Recharts rendering crashes
+class ChartErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="w-full flex items-center justify-center p-8 text-center">
+          <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Chart temporarily unavailable</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function WeightChartInner({ data, height = 300 }) {
   if (!data || data.length === 0) {
     return (
       <div className="w-full flex flex-col items-center justify-center p-8 text-center border border-dashed border-white/5 rounded-3xl" style={{ height }}>
@@ -29,24 +51,24 @@ export default function WeightChart({ data, height = 300 }) {
   }));
 
   return (
-    <div className="w-full" style={{ width: '100%', height: height }}>
-      <AreaChart width={500} height={height} data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} style={{ width: '100%' }}>
+    <div className="w-full overflow-hidden" style={{ height }}>
+      <AreaChart width={480} height={height} data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
         <defs>
           <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--color-accent-cyan)" stopOpacity={0.2} />
-            <stop offset="100%" stopColor="var(--color-accent-cyan)" stopOpacity={0} />
+            <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.2} />
+            <stop offset="100%" stopColor="#22d3ee" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
         <XAxis
           dataKey="formattedDate"
-          tick={{ fill: 'var(--color-dark-300)', fontSize: 10, fontWeight: 700 }}
+          tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }}
           axisLine={false}
           tickLine={false}
           dy={10}
         />
         <YAxis
-          tick={{ fill: 'var(--color-dark-300)', fontSize: 10, fontWeight: 700 }}
+          tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }}
           axisLine={false}
           tickLine={false}
           domain={['auto', 'auto']}
@@ -55,14 +77,22 @@ export default function WeightChart({ data, height = 300 }) {
         <Area
           type="monotone"
           dataKey="weight"
-          stroke="var(--color-accent-cyan)"
+          stroke="#22d3ee"
           strokeWidth={3}
           fill="url(#weightGrad)"
-          dot={{ r: 4, fill: 'var(--color-accent-cyan)', strokeWidth: 3, stroke: 'var(--color-dark-800)' }}
-          activeDot={{ r: 6, fill: 'var(--color-accent-cyan)', strokeWidth: 3, stroke: 'white' }}
+          dot={{ r: 4, fill: '#22d3ee', strokeWidth: 3, stroke: '#0f172a' }}
+          activeDot={{ r: 6, fill: '#22d3ee', strokeWidth: 3, stroke: 'white' }}
           animationDuration={1500}
         />
       </AreaChart>
     </div>
+  );
+}
+
+export default function WeightChart(props) {
+  return (
+    <ChartErrorBoundary>
+      <WeightChartInner {...props} />
+    </ChartErrorBoundary>
   );
 }
