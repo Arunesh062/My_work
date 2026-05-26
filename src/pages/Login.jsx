@@ -27,6 +27,7 @@ export default function Login() {
   };
 
   const handleGoogleLogin = async () => {
+    console.log("[UI] Google Login Button Clicked");
     try {
       await googleLogin();
       toast.success('Neural Link Established.');
