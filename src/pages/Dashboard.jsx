@@ -88,22 +88,14 @@ export default function Dashboard() {
                </div>
             </div>
             <div className="p-8 bg-dark-900/50 rounded-3xl border border-white/10 backdrop-blur-xl">
-               <div className="flex items-center justify-between mb-8">
+               <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest">Weight Velocity</h3>
                   <div className="flex items-center gap-2">
                      <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
                      <span className="text-[10px] text-white font-black uppercase">Live Updates</span>
                   </div>
                </div>
-                <div className="h-[200px] w-full flex items-center justify-center">
-                   {weightLogs && weightLogs.length > 0 ? (
-                      <WeightChart data={weightLogs} height={200} />
-                   ) : (
-                      <div className="text-center p-6">
-                         <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Awaiting Bio-Metric Input</p>
-                      </div>
-                   )}
-                </div>
+               <WeightChart data={weightLogs} />
             </div>
          </div>
       </section>
