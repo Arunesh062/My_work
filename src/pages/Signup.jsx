@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -11,8 +11,15 @@ export default function Signup() {
     currentWeight: '', targetWeight: '', height: '175'
   });
   const [loading, setLoading] = useState(false);
-  const { signup, googleLogin } = useAuth();
+  const { signup, googleLogin, currentUser } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/');
+    }
+  }, [currentUser, navigate]);
 
   const handleSignup = async (e) => {
     e.preventDefault();
