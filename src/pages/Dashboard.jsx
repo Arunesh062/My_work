@@ -3,7 +3,7 @@ import { useStore } from '../store/useStore';
 import ProgressCard from '../components/ProgressCard';
 import SimpleWeightChart from '../components/SimpleWeightChart';
 import NotificationButton from '../components/NotificationButton';
-import { HiPlus, HiFire, HiScale, HiBeaker, HiOutlineLightningBolt } from 'react-icons/hi';
+import { HiFire, HiScale, HiBeaker, HiOutlineLightningBolt } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { HiPlus, HiMinus, HiRefresh, HiCheckCircle } from 'react-icons/hi';
 
@@ -13,6 +14,10 @@ export default function WaterTracker() {
     "Carry a reusable bottle to track your intake more consistently.",
     "Cold water can slightly increase calorie burn during digestion."
   ];
+
+  const tip = useMemo(() => {
+    return tips[Math.floor(Date.now() / 86400000) % tips.length];
+  }, [tips]);
 
   const glassCount = Math.ceil(goal);
   const filledGlasses = Math.floor(waterIntake);
@@ -78,7 +83,7 @@ export default function WaterTracker() {
 
            <div className="bg-dark-800 border border-white/5 rounded-[40px] p-8 space-y-6">
               <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest">Hydration Insight</h4>
-              <p className="text-sm font-medium text-slate-300 leading-relaxed italic">"{tips[Math.floor(Date.now() / 86400000) % tips.length]}"</p>
+              <p className="text-sm font-medium text-slate-300 leading-relaxed italic">"{tip}"</p>
               <div className="flex gap-2">
                  <button onClick={resetWater} className="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-widest bg-transparent border-none cursor-pointer transition-colors">
                     <HiRefresh /> Reset Meter

@@ -1,17 +1,8 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { showNotification, requestNotificationPermission } from '../utils/notifications';
+import { useStore } from '../store/useStore';
 
 const NotificationContext = createContext();
-
-const MEAL_REMINDERS = [
-  { time: '07:00', title: 'Mass Gainer Shake 💪', body: 'Initialize hypertrophy protocol. Consume mass gainer now.' },
-  { time: '09:00', title: 'Breakfast 🍳', body: 'Energy intake required. Consume breakfast protocol.' },
-  { time: '11:00', title: 'Snack 🍌', body: 'Metabolic maintenance. Mid-morning snack due.' },
-  { time: '13:30', title: 'Lunch 🍛', body: 'Peak nutrient delivery. Initiate lunch sequence.' },
-  { time: '16:30', title: 'Evening Snack 🥜', body: 'Anabolic window protection. Evening snack required.' },
-  { time: '19:30', title: 'Dinner 🍽️', body: 'Nightload sequence initiated. Consume dinner protocol.' },
-  { time: '22:00', title: 'Milk Before Sleep 🥛', body: 'Slow-release protein required. Final nutrient intake.' },
-];
 
 const MOTIVATIONS = [
   "Consistency builds muscle 🔥",
@@ -24,6 +15,8 @@ const MOTIVATIONS = [
 export function NotificationProvider({ children }) {
   const [permission, setPermission] = useState(Notification.permission);
   const [enabled, setEnabled] = useState(localStorage.getItem('notifications_enabled') === 'true');
+  const { reminders } = useStore();
+  const lastNotified = useRef('');
 
   const requestPermission = async () => {
     const result = await requestNotificationPermission();
@@ -49,11 +42,20 @@ export function NotificationProvider({ children }) {
     const checkReminders = () => {
       const now = new Date();
       const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      
+      // Prevent double notifications in the same minute
+      if (lastNotified.current === currentTime) return;
 
-      // Check Meal Reminders
-      MEAL_REMINDERS.forEach(meal => {
-        if (meal.time === currentTime) {
-          showNotification(meal.title, meal.body);
+      let notifiedInThisCycle = false;
+
+      // Check User Reminders from Store
+      reminders?.forEach(meal => {
+        if (meal.enabled && !meal.completed && meal.time === currentTime) {
+          showNotification(
+            `${meal.emoji || '🥣'} ${meal.title}`, 
+            `Time for your ${meal.calories} kcal feeding protocol. Consistency is key!`
+          );
+          notifiedInThisCycle = true;
         }
       });
 
@@ -61,12 +63,19 @@ export function NotificationProvider({ children }) {
       if (currentTime === '10:00' || currentTime === '17:00') {
         const randomQuote = MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)];
         showNotification('My Work Motivation', randomQuote);
+        notifiedInThisCycle = true;
+      }
+
+      if (notifiedInThisCycle) {
+        lastNotified.current = currentTime;
       }
     };
 
-    const interval = setInterval(checkReminders, 60000); // Check every minute
+    // Run immediately then every 30 seconds for better accuracy
+    checkReminders();
+    const interval = setInterval(checkReminders, 30000); 
     return () => clearInterval(interval);
-  }, [permission, enabled]);
+  }, [permission, enabled, reminders]);
 
   return (
     <NotificationContext.Provider value={{ permission, enabled, requestPermission, toggleNotifications }}>

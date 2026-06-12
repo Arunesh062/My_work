@@ -1,4 +1,4 @@
-export default function ProgressCard({ title, value, max, unit, icon, color, subtitle }) {
+export default function ProgressCard({ title, value, max, unit, icon: Icon, color, subtitle }) {
   const percentage = max > 0 ? Math.min((value / max) * 100, 100) : 0;
 
   const colorStyles = {
@@ -46,7 +46,7 @@ export default function ProgressCard({ title, value, max, unit, icon, color, sub
       <div>
         <div className="flex items-start justify-between mb-4">
           <div className={`p-3 rounded-xl bg-dark-900 border ${s.border} text-2xl transition-transform duration-300 group-hover:scale-110`}>
-            {icon}
+            {typeof Icon === 'function' ? <Icon /> : Icon}
           </div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{title}</p>
         </div>
